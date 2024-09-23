@@ -1,13 +1,8 @@
 name: Upload Website
-
 on:
   push:
     branches: 
     - master
-
-permissions:
-  id-token: write
-  contents: read
 
 env:
   AWS_REGION : "us-east-1"
@@ -15,16 +10,19 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      - name: checkout
-        uses: actions/checkout@master
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@master
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
+          aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          aws-region: ${{ env.AWS_REGION }}
-      - name: sync s3
+      - name: Sync S3
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete
@@ -32,7 +30,7 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_REGION: ${{ env.AWS_REGION }}
           SOURCE_DIR: "public"
-      - name: invalidate CloudFront
+      - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
         env:
           DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
