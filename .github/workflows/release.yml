@@ -5,6 +5,7 @@ on:
     - master
 env:
   AWS_REGION : us-east-1
+  AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
 permissions:
   id-token: write
   contents: read
@@ -23,13 +24,11 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_ROLE }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          
+
       - name: Sync S3
         if: github.ref == 'refs/heads/master'
         shell: bash
         run: aws s3 sync ./public/ s3://$AWS_S3_BUCKET --follow-symlinks --delete
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
 
       - name: Invalidate CloudFront
         shell: bash
