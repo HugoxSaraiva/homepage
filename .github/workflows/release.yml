@@ -25,13 +25,11 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           
       - name: Sync S3
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --acl public-read --follow-symlinks --delete
+        if: github.ref == 'refs/heads/master'
+        shell: bash
+        run: aws s3 sync ./public/ s3://$AWS_S3_BUCKET --acl public-read --follow-symlinks --delete
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_REGION: ${{ env.AWS_REGION }}
-          SOURCE_DIR: "public"
 
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
