@@ -27,12 +27,13 @@ jobs:
       - name: Sync S3
         if: github.ref == 'refs/heads/master'
         shell: bash
-        run: aws s3 sync ./public/ s3://$AWS_S3_BUCKET --acl public-read --follow-symlinks --delete
+        run: aws s3 sync ./public/ s3://$AWS_S3_BUCKET --follow-symlinks --delete
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
 
       - name: Invalidate CloudFront
-        uses: chetan/invalidate-cloudfront-action@v2
+        shell: bash
+        run: aws cloudfront create-invalidation --distribution-id $DISTRIBUTION --paths "/*"
         env:
           DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
           PATHS: "*"
