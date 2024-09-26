@@ -17,14 +17,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.134.0'
           extended: true
       - name: Build
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+          HUGO_ENVIRONMENT: production
+          TZ: America/Sao_Paulo
         working-directory: ./src
-        run: hugo --minify
+        run: |
+          hugo \
+            --gc \
+            --minify
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
