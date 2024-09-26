@@ -3,8 +3,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title itemprop="name">
-  {{ if .IsHome }}{{ .Title }}{{ else }}{{ .Title }} &minus; {{ .Site.Title }}{{
-  end }}
+  {{ if .IsHome }}{{ .Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end
+  }}
 </title>
 <meta property="og:title" content="{{ .Title }} | {{ .Site.Title }}" />
 <meta name="twitter:title" content="{{ .Title }} | {{ .Site.Title }}" />
